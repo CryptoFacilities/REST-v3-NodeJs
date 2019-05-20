@@ -257,6 +257,22 @@ class CfRestApiV3 {
         return makeRequest(requestOptions, 'getOpenPositions(): ')
     }
 
+    // returns  recent orders
+    getRecentOrders(symbol = null) {
+        let endpoint = '/api/v3/recentorders';
+        let params = symbol ? `symbol=${symbol}` : '';
+        let nonce = createNonce();
+        let authent = this.signRequest(endpoint, nonce);
+        let headers = {'Accept': 'application/json', 'APIKey': this.apiKey, 'Nonce': nonce, 'Authent': authent};
+        let requestOptions = {
+            url: `${this.baseUrl}${endpoint}?${encodeURI(params)}`,
+            method: 'GET',
+            headers: headers,
+            timeout: this.timeout
+        };
+        return makeRequest(requestOptions, 'getRecentOrders(): ')
+    }
+
     // returns filled orders
     getFills(lastFillTime = null) {
         let endpoint = '/api/v3/fills';

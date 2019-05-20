@@ -121,6 +121,9 @@ let openOrdersPromise = cfRest.getOpenOrders();
 // get open positions
 let openPositionsPromise = cfRest.getOpenPositions();
 
+// get recent orders
+let recentOrdersPromise = cfRest.getRecentOrders(symbol);
+
 // get filled orders
 let lastFillTime = '2019-02-16T23:19:12.121Z';
 let fillsPromise = cfRest.getFills(lastFillTime);
@@ -147,6 +150,7 @@ function main() {
         cancelAllOrdersAfterPromise,
         openOrdersPromise,
         openPositionsPromise,
+        recentOrdersPromise,
         fillsPromise,
         transfersPromise,
         notificationsPromise])

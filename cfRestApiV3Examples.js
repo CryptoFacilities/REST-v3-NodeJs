@@ -50,22 +50,26 @@ let accountsPromise = cfRest.getAccounts();
 
 //send limit order
 let orderType = 'lmt';
-symbol = 'FI_XBTUSD_180615';
+symbol = 'PI_XBTUSD';
 let side = 'buy';
 let size = 1;
 let limitPrice = 1.00;
-let clientId = 'my_client_id'
+let clientId = 'my_client_id';
 let sendOrderLimitPromise = cfRest.sendOrder(orderType, symbol, side, size, limitPrice, clientOrderId= clientId);
 
 
 //send stop order
 orderType = 'stp';
-symbol = 'FI_XBTUSD_180615';
+symbol = 'PI_XBTUSD';
 side = 'buy';
 size = 1;
 limitPrice = 1.00;
 let stopPrice = 2.00;
 let sendOrderStopPromise = cfRest.sendOrder(orderType, symbol, side, size, limitPrice, stopPrice);
+
+//edit order
+edit = {'cliOrdId': 'my_client_id', 'size': 2, 'limitPrice': 2};
+let editOrderPromise = cfRest.editOrder(edit);
 
 //batch order
 let elementJson = {
@@ -144,6 +148,7 @@ function main() {
         accountsPromise,
         sendOrderLimitPromise,
         sendOrderStopPromise,
+        editOrderPromise,
         batchOrderPromise,
         cancelOrderPromise,
         cancelAllOrdersPromise,

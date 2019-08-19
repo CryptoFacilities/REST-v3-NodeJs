@@ -128,6 +128,30 @@ class CfRestApiV3 {
         return makeRequest(requestOptions, 'sendOrder(): ')
     }
 
+    // edit order
+    editOrder(edit) {
+        let endpoint = '/api/v3/edit';
+        let nonce = createNonce();
+        let data = qs.encode(edit);
+        let authent = this.signRequest(endpoint, nonce, data);
+        let headers = {
+            'Accept': 'application/json',
+            'APIKey': this.apiKey,
+            'Nonce': nonce,
+            'Authent': authent,
+            'Content-Type': 'application/x-www-form-urlencoded',
+            'Content-Length': data.length
+        };
+        let requestOptions = {
+            url: this.baseUrl + endpoint,
+            method: 'POST',
+            headers: headers,
+            body: data,
+            timeout: this.timeout
+        };
+        return makeRequest(requestOptions, 'editOrder(): ')
+    }
+
     //cancel order
     cancelOrder(orderId, cliOrdId) {
         let endpoint = '/api/v3/cancelorder';
@@ -262,7 +286,7 @@ class CfRestApiV3 {
         let endpoint = '/api/v3/recentorders';
         let params = symbol ? `symbol=${symbol}` : '';
         let nonce = createNonce();
-        let authent = this.signRequest(endpoint, nonce);
+        let authent = this.signRequest(endpoint, nonce, params);
         let headers = {'Accept': 'application/json', 'APIKey': this.apiKey, 'Nonce': nonce, 'Authent': authent};
         let requestOptions = {
             url: `${this.baseUrl}${endpoint}?${encodeURI(params)}`,

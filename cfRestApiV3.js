@@ -130,7 +130,7 @@ class CfRestApiV3 {
 
     // edit order
     editOrder(edit) {
-        let endpoint = '/api/v3/edit';
+        let endpoint = '/api/v3/editorder';
         let nonce = createNonce();
         let data = qs.encode(edit);
         let authent = this.signRequest(endpoint, nonce, data);

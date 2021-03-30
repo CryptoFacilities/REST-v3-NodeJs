@@ -427,12 +427,103 @@ class CfRestApiV3 {
   }
 
   /**
+   * Historical orders after a certain point in reverse chronological order.
+   */
+  getHistoricalOrders(since = None) {
+    return this._getHistoricalElements('orders', since)
+  }
+
+  /**
+   * Recent orders in reverse chronological order.
+   */
+  getRecentOrders() {
+    return this.getHistoricalOrders(None)
+  }
+
+  /**
+   * Historical executions after a certain point in reverse chronological order.
+   */
+  getHistoricalExecutions(since) {
+    return this._getHistoricalElements('executions', since)
+  }
+
+  /**
+   * Recent executions in reverse chronological order.
+   */
+  getRecentExecutions() {
+    return this.getHistoricalExecutions()
+  }
+
+  async _getHistoricalElements(elementType, since) {
+    let elements = []
+
+    let more = true
+    let contToken = undefined
+
+    while (more) {
+      const { response, body, name } = await this._getPartialHistoricalElements(
+        elementType,
+        since,
+        contToken
+      )
+
+      const els = JSON.parse(body).elements
+      for (const el of els) {
+        elements.push(el)
+      }
+
+      const isTrunc = response.headers['is-truncated']
+      if (isTrunc === undefined || isTrunc === 'false') {
+        more = false
+        contToken = undefined
+      } else {
+        contToken = response.headers['next-continuation-token']
+      }
+
+      elements.sort((a, b) => b.timestamp - a.timestamp)
+    }
+
+    return { name: 'getHistory(): ', body: elements }
+  }
+
+  _getPartialHistoricalElements(elementType, since, continuationToken) {
+    let params = continuationToken
+      ? { continuationToken }
+      : since
+      ? { since }
+      : undefined
+    let paramsStr = params ? qs.stringify(params) : ''
+
+    let endpoint = `/api/history/v2/${elementType}`
+    let authent = this.signRequest(endpoint, undefined, paramsStr)
+
+    if (paramsStr) {
+      endpoint += '?' + paramsStr
+    }
+
+    let headers = {
+      Accept: 'application/json',
+      APIKey: this.apiKey,
+      Authent: authent,
+    }
+
+    let requestOptions = {
+      url: this.baseUrl + endpoint,
+      method: 'GET',
+      headers: headers,
+      timeout: this.timeout,
+    }
+
+    return makeRequest(requestOptions, 'getHistory(): ')
+  }
+
+  /**
    * Sign request.
    */
-  signRequest(endpoint, nonce, postData = '') {
+  signRequest(endpoint, nonce = '', postData = '') {
     // step 1: concatenate postData, nonce + endpoint
     if (endpoint.startsWith('/derivatives')) {
-        endpoint = endpoint.slice('/derivatives'.length)
+      endpoint = endpoint.slice('/derivatives'.length)
     }
 
     let message = postData + nonce + endpoint
@@ -453,11 +544,13 @@ class CfRestApiV3 {
 
 function makeRequest(requestOptions, printName) {
   return new Promise((resolve, reject) => {
+    requestOptions.headers['User-Agent'] = 'cf-api-js/1.0'
+
     request(requestOptions, function (error, response, body) {
       if (error) {
         reject(error)
       } else {
-        resolve({ name: printName, body: body })
+        resolve({ name: printName, response, body })
       }
     })
   })

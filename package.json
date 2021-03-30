@@ -3,22 +3,15 @@
   "version": "0.0.0",
   "private": true,
   "dependencies": {
-    "cookie-parser": "~1.4.3",
-    "debug": "~2.6.9",
-    "express": "~4.16.0",
-    "http-errors": "~1.6.2",
-    "morgan": "~1.9.0",
-    "pug": "2.0.0-beta11",
     "request": "^2.88.0",
-    "utf8": "latest"
+    "utf8": "^3.0.0"
   },
   "main": "cfRestApiV3.js",
-  "devDependencies": {},
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
-  "author": "theo@cryptofacilities.com",
+  "author": "future@kraken.com",
   "license": "ISC",
   "description": "Sample http client application"
 }

@@ -382,12 +382,34 @@ class CfRestApiV3 {
   }
 
   /**
+   * Returns account log.
+   */
+  getAccountLog() {
+    let endpoint = '/api/history/v2/account-log'
+    let nonce = createNonce()
+    let authent = this.signRequest(endpoint, nonce)
+    let headers = {
+      Accept: 'application/json',
+      APIKey: this.apiKey,
+      Nonce: nonce,
+      Authent: authent,
+    }
+    let requestOptions = {
+      url: `${this.baseUrl}${endpoint}`,
+      method: 'GET',
+      headers: headers,
+      timeout: this.timeout,
+    }
+    return makeRequest(requestOptions, 'getAccountLog(): ')
+  }
+
+  /**
    * Returns transfers.
    */
   getTransfers(lastTransferTime = null) {
     let endpoint = '/derivatives/api/v3/transfers'
     let nonce = createNonce()
-    let params = lastTransferTime ? `lastTransferTime= ${lastTransferTime}` : ''
+    let params = lastTransferTime ? `lastTransferTime=${lastTransferTime}` : ''
     let authent = this.signRequest(endpoint, nonce, params)
     let headers = {
       Accept: 'application/json',

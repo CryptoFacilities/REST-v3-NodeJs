@@ -153,6 +153,9 @@ let transfersPromise = cfRest.getTransfers(lastTransferTime)
 // get notifications
 let notificationsPromise = cfRest.getNotifications()
 
+// get accountLog
+let accountLogPromise = cfRest.getAccountLog()
+
 async function main() {
   const responses = await Promise.all([
     instrumentsPromise,
@@ -173,6 +176,7 @@ async function main() {
     fillsPromise,
     transfersPromise,
     notificationsPromise,
+    accountLogPromise,
   ])
 
   for (const response of responses) {
